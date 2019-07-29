@@ -101,7 +101,7 @@ const extension: JupyterFrontEndPlugin<void> = {
           .execute("notebook:create-new", {
             path,
             type: "notebook",
-            kernelName: "python3"
+            kernelName: "conda-env-python-py"
           })
           .then(async (model: INotebookModel) => {
             notebook = model;
