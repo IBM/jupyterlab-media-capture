@@ -8,7 +8,7 @@ basedir = getcwd()
 
 def save_file(path, content):
     content_bytes = bytearray(content)
-    with open('{}{}'.format(basedir, path), 'wb') as new_file:
+    with open('{}/{}'.format(basedir, path), 'wb') as new_file:
         new_file.write(content_bytes)
 
 class MediaCaptureHandler(APIHandler):

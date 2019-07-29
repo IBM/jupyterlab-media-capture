@@ -5,7 +5,11 @@ import {
 
 import "../style/index.css";
 
-import { /*NotebookActions,*/ INotebookTracker } from "@jupyterlab/notebook";
+import {
+  NotebookActions,
+  INotebookTracker,
+  INotebookModel
+} from "@jupyterlab/notebook";
 
 import { ICommandPalette } from "@jupyterlab/apputils";
 
@@ -34,7 +38,12 @@ class AudioRecorder extends Widget {
 let audioRecorder: any;
 const mimeType = "audio/wav";
 let saveFile: Function;
+let insertCodeSnippetForFile: Function;
 let audioStream: any;
+
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /**
  * Initialization data for the jupyterlab_media_capture extension.
@@ -55,6 +64,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     browserFactory: IFileBrowserFactory,
     docManager: IDocumentManager
   ) => {
+    const { commands } = app;
     const command: string = "media:record-audio";
 
     // let contents = new ContentsManager();
@@ -76,40 +86,61 @@ const extension: JupyterFrontEndPlugin<void> = {
           { method: "POST", body: JSON.stringify({ filename, path, content }) },
           settings
         ).then((response: any) => {
-          resolve(filename);
+          resolve(path.slice(1));
         });
       });
     };
 
-    //     function insertCodeSnippetForFile() {
-    //       console.log('insert');
-    //       if (tracker.currentWidget == null) {
-    //         // not in a notebook -- just open the file
-    //         docManager.open(path);
-    //       } else {
-    //         console.log("inserting cell");
-    //         NotebookActions.insertBelow(tracker.currentWidget.content);
-    //         tracker.currentWidget.content.activeCell.model.value.text = `from matplotlib import pyplot as plt
-    // import cv2
+    insertCodeSnippetForFile = async function(path: string) {
+      console.log("insert");
+      let notebook: any;
+      if (tracker.currentWidget == null) {
+        // not in a notebook -- just open the file
+        console.log("nothing open");
+        await commands
+          .execute("notebook:create-new", {
+            path,
+            type: "notebook",
+            kernelName: "python3"
+          })
+          .then(async (model: INotebookModel) => {
+            notebook = model;
+          });
+        console.log("waited");
+      } else {
+        notebook = tracker.currentWidget;
+      }
+      console.log(notebook);
+      console.log(notebook.context);
+      // notebook.context.ready(() => {
+      await notebook.context.ready;
 
-    // img = cv2.imread(".${path}")
-    // img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # fix color
-    // plt.axis("off") # remove axes ticks
-    // plt.imshow(img)
-    // plt.show()`;
-    //         NotebookActions.run(
-    //           tracker.currentWidget.content,
-    //           tracker.currentWidget.session
-    //         )
-    //           .then(result => {
-    //             console.log(result);
-    //           })
-    //           .catch(err => {
-    //             console.error(err);
-    //           });
-    //       }
-    //     }
-    //     console.log(insertCodeSnippetForFile);
+      console.log("inserting cell");
+      console.log(notebook.content);
+      NotebookActions.insertBelow(notebook.content);
+      let cellValue;
+      if (notebook.content.activeCell) {
+        cellValue = notebook.content.activeCell.model.value;
+      } else {
+        console.log(notebook.model.cells);
+        while (!notebook.model.cells.get(0)) {
+          await sleep(500);
+        }
+        cellValue = notebook.model.cells.get(0).value;
+      }
+
+      cellValue.text = `from IPython.display import Audio
+Audio("${path}")`;
+
+      NotebookActions.run(notebook.content, notebook.session)
+        .then((result: any) => {
+          console.log(result);
+        })
+        .catch((err: any) => {
+          console.error(err);
+        });
+      // })
+    };
 
     app.commands.addCommand(command, {
       label: "Record Audio",
@@ -248,12 +279,12 @@ namespace Private {
             new Uint8Array(fileReader.result as any)
           );
           saveFile(`${Date.now()}.wav`, content, mimeType, null).then(
-            (filename: string) => {
+            (filepath: string) => {
               audioStream
                 .getAudioTracks()
                 .forEach((track: any) => track.stop());
               audioRecorder.destroy();
-              showDoneRecording(filename);
+              showDoneRecording(filepath);
             }
           );
         };
@@ -262,20 +293,21 @@ namespace Private {
       });
     };
 
-    var showDoneRecording = (filename: string) => {
+    var showDoneRecording = (filepath: string) => {
       clearAudioRecorderNode();
       let text = document.createElement("span");
-      text.innerHTML = `<h3>Finished Recording.</br>Saved recording as ${filename}</h3></br>`;
+      text.innerHTML = `<h3>Saved recording as ${filepath}</br>and inserted into your notebook.</h3></br>`;
       body.appendChild(text);
+      insertCodeSnippetForFile(filepath);
     };
 
     var showRecording = () => {
-      clearAudioRecorderNode();
       navigator.mediaDevices
         .getUserMedia({
           audio: true
         })
         .then(async function(stream) {
+          clearAudioRecorderNode();
           audioStream = stream;
           audioRecorder = RecordRTC(audioStream, {
             type: "audio",
