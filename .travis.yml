@@ -1,0 +1,37 @@
+language: python
+python: '3.6'
+cache:
+  yarn: true
+  pip: true
+  directories:
+    - node_modules
+install:
+  - yarn install
+  - yarn run build
+  - pip install .
+script:
+  - echo "no tests implemented"
+deploy:
+  # provider: npm doesn't work for some reason :(
+  - provider: script
+    skip_cleanup: true
+    script: "cp .npmrc.template $HOME/.npmrc && npm publish"
+    on:
+      tags: true
+      repo: cognitive-class-labs/jupyterlab-media-capture
+  - provider: pypi
+    skip_cleanup: true
+    server: https://na.artifactory.swg-devops.com/artifactory/api/pypi/apset-pypi-local
+    user: james.reeve@ibm.com
+    password:
+      secure: nXnFy9W0aNVNfQlQC52qNqPrh9ucW/Hz1RU57q/n+porzbRVsJLjjtwPqh9i+ReK5ohJaPHZIHq4xv6BfY6+AMjMl1tbAUJRrkXwZICjj5hOFWZNY4S1NrJ+TMKjGgqUmU4qUwgJ6a7U2YDdPSys+ccAoy3QNFpiTWJkdh18zvWKJDPRE7CDS3m7974UY9w/i1/Yct5meJJnjHoTbSas37SLv2vxat3mJwSorA+3MYkUUPlKILcGR84K3i26yF7ZMw+Yv4koFnowyqwzZJ2grx0mtkiV4v/xcznd/IsChhPtBScMtSg8pfErHefooP4nWX2B93wUex9GjZcSX08iSy3Zd4tfOKRS/dLCLjk8Y7AW4eHV+ZH9SwUBylnzvFWw+6ljJgMCnmZ3LkPihez7pUTgOkOjXSn+jXSlJZXD8z7+U4GiptgEsHPeq84NI/JnQ25hlwdx69fgk8VH8IDSe3QZPksk32p6y2wIk1tLzCnGMfodsnKopo2oi48PWfmvFoJmOTJ8Q3B17Te7nBd4r4gTImYtMYB1PJWlletXjjS9COmm4/quGPMX4T7GWmqwqocyWGvdw318i6GISVZk+OJ2AmRRolzFeYkeQ7XcH2t8vahpTNKguZv1dNeBlnLJIR7zuVZrKBbkwixDnRYwKwiGyHMG2UwdjnRonRH33Vc= # pragma: whitelist secret
+    on:
+      tags: true
+      repo: cognitive-class-labs/jupyterlab-media-capture
+notifications:
+  email: false
+  slack:
+    on_pull_requests: false
+    on_failure: "change"
+    on_success: "change"
+    secure: "Vjo4iOMxhdDRjnfBFKeI7qPRIFccZGxIznqsj29YgD4prEtl3hoJ6UIoa9QiSZgM70fTTfwxtAxuBCo9TWXUNVF5d5LbCX/fGtTwx8ChpsM0pAco+Vqk2IEYBZzU2x1hbWolLTIkaHSVbBWqCV5yRvkOWod6T14axZCAQbJa8khelpxC0xFDxsYdD5BDWl9NdFugetPJbWxr7qxjyTX+B/mEHCm+8BGvCHX+Cd+ysCxlWozhElcvRnxCebDbRYUHkvc9elDue8qFMgFEcRcb6Yo+GFGjA95kLhLmpTybk2Bs7fIQIn86PpeObAIlZHKlKNB8rcN/OHxnzZ87VY2BPosz6Uankw0IUiTOER5knwf++mkhyDo0afRS1GHFr5z0UoPs490+5+nVOpfcuYWgERmP9VWfkxrKCfH7zUKrelRFCiqU21dLszMcMiLqTYcWrBbY3fNKx6grDi/tbv1daasyFq0pyyZWdn5wYm/Mg3iBmBGHxSoSPwl8y57EC4ik3BUcELkN1cT2jqM6KOsAddo/NOWdUxB5PPgGrJ1gnQp6r/8lB7R29cU0UkyGLOvB3slq5odlFAJWFLmYB6yIQ04am3WDk3HomqXGkZj6xUScPlKu5csoH0PGEEqDBb8FlHj7PnYrWEWFg5I4ieF1zhOl2fCyoNl0t7ZWqI/YdAw=" # pragma: whitelist secret

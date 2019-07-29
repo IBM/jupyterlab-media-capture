@@ -1,17 +1,24 @@
 {
-  "name": "jupyterlab_media_capture",
-  "version": "0.1.0",
-  "description": "A JupyterLab extension.",
+  "name": "@apset/jupyterlab-media-capture",
+  "version": "0.0.1",
+  "description": "Capture media using browser APIs within JupyterLab",
   "keywords": [
     "jupyter",
     "jupyterlab",
     "jupyterlab-extension"
   ],
-  "homepage": "https://github.com/my_name/myextension",
-  "bugs": {
-    "url": "https://github.com/my_name/myextension/issues"
+  "homepage": "https://github.ibm.com/cognitive-class-labs/jupyterlab-media-capture",
+  "repository": {
+    "type": "git",
+    "url": "https://github.ibm.com/cognitive-class-labs/jupyterlab-media-capture.git"
   },
-  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.ibm.com/cognitive-class-labs/jupyterlab-media-capture/issues"
+  },
+  "publishConfig": {
+    "registry": "https://na.artifactory.swg-devops.com/artifactory/api/npm/apset-npm/"
+  },
+  "license": "MIT",
   "author": "James Reeve",
   "files": [
     "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
@@ -19,26 +26,41 @@
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/my_name/myextension.git"
+  "directories": {
+    "lib": "lib/"
   },
   "scripts": {
+    "test": "echo 'no tests implemented'",
     "build": "tsc",
     "clean": "rimraf lib",
-    "prepare": "npm run clean && npm run build",
+    "precommit": "lint-staged",
+    "lint-travis": "travis lint .travis.yml",
+    "prettier": "prettier --write '**/*{.ts,.tsx,.js,.jsx,.css,.json,.md}'",
     "watch": "tsc -w"
   },
+  "lint-staged": {
+    "**/*{.ts,.tsx,.css,.json,.md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
   "dependencies": {
-    "@jupyterlab/application": "^0.19.1",
-    "@jupyterlab/docmanager": "^0.19.1",
-    "@jupyterlab/filebrowser": "^0.19.3",
-    "@jupyterlab/notebook": "^0.19.2",
-    "@jupyterlab/services": "^3.2.1"
+    "@jupyterlab/application": "^1.0.1",
+    "@jupyterlab/docmanager": "^1.0.1",
+    "@jupyterlab/filebrowser": "^1.0.1",
+    "@jupyterlab/notebook": "^1.0.1",
+    "@jupyterlab/services": "^4.0.1",
+    "recordrtc": "^5.5.8"
   },
   "devDependencies": {
-    "rimraf": "^2.6.1",
-    "typescript": "~3.1.1"
+    "husky": "^2.4.1",
+    "lint-staged": "^8.2.1",
+    "prettier": "^1.18.2",
+    "rimraf": "^2.6.3",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
+    "typescript": "^3.5.2"
   },
   "jupyterlab": {
     "extension": true

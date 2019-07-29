@@ -1,0 +1,50 @@
+.microphone-icon {
+  background-image: url(microphone-white.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: red;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  background-size: 40px;
+  display: table;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  margin-bottom: 20px;
+}
+
+.stop-recording-icon {
+  background-image: url(stop-white.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: red;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  background-size: 40px;
+  display: table;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  margin-bottom: 20px;
+}
+
+.microphone-icon:hover,
+.stop-recording-icon:hover {
+  transform: scale(1.1);
+}
+
+.invisible {
+  display: none;
+}
+
+.blinking {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}

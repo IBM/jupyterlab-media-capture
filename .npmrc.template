@@ -1,0 +1,5 @@
+@apset:registry=https://na.artifactory.swg-devops.com:443/artifactory/api/npm/apset-npm/
+//na.artifactory.swg-devops.com:443/artifactory/api/npm/apset-npm/:_password=${NPM_PASSWORD}
+//na.artifactory.swg-devops.com:443/artifactory/api/npm/apset-npm/:username=${NPM_USERNAME}
+//na.artifactory.swg-devops.com:443/artifactory/api/npm/apset-npm/:email=${NPM_EMAIL}
+//na.artifactory.swg-devops.com:443/artifactory/api/npm/apset-npm/:always-auth=true
