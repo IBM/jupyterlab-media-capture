@@ -8,8 +8,10 @@ basedir = getcwd()
 
 def save_file(path, content):
     content_bytes = bytearray(content)
-    with open('{}/{}'.format(basedir, path), 'wb') as new_file:
+    path ='{}{}'.format(basedir, path)
+    with open(path, 'wb') as new_file:
         new_file.write(content_bytes)
+    return path
 
 class MediaCaptureHandler(APIHandler):
     def get(self, path=''):
@@ -17,8 +19,8 @@ class MediaCaptureHandler(APIHandler):
 
     def post(self, path=''):
         body = json.loads(self.request.body)
-        save_file(body['path'], body['content'])
-        self.finish(json.dumps({'file': 'ok'}))
+        saved_path = save_file(body['path'], body['content'])
+        self.finish(json.dumps({'saved_path': saved_path}))
 
 
 def _jupyter_server_extension_paths():

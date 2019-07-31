@@ -85,18 +85,20 @@ const extension: JupyterFrontEndPlugin<void> = {
           url,
           { method: "POST", body: JSON.stringify({ filename, path, content }) },
           settings
-        ).then((response: any) => {
-          resolve(path.slice(1));
-        });
+        )
+          .then((response: any) => {
+            return response.json();
+          })
+          .then((parsed_response: any) => {
+            resolve(parsed_response.saved_path);
+          });
       });
     };
 
     insertCodeSnippetForFile = async function(path: string) {
-      console.log("insert");
       let notebook: any;
       if (tracker.currentWidget == null) {
         // not in a notebook -- just open the file
-        console.log("nothing open");
         await commands
           .execute("notebook:create-new", {
             path,
@@ -106,23 +108,15 @@ const extension: JupyterFrontEndPlugin<void> = {
           .then(async (model: INotebookModel) => {
             notebook = model;
           });
-        console.log("waited");
       } else {
         notebook = tracker.currentWidget;
       }
-      console.log(notebook);
-      console.log(notebook.context);
-      // notebook.context.ready(() => {
       await notebook.context.ready;
-
-      console.log("inserting cell");
-      console.log(notebook.content);
       NotebookActions.insertBelow(notebook.content);
       let cellValue;
       if (notebook.content.activeCell) {
         cellValue = notebook.content.activeCell.model.value;
       } else {
-        console.log(notebook.model.cells);
         while (!notebook.model.cells.get(0)) {
           await sleep(500);
         }
@@ -133,13 +127,10 @@ const extension: JupyterFrontEndPlugin<void> = {
 Audio("${path}")`;
 
       NotebookActions.run(notebook.content, notebook.session)
-        .then((result: any) => {
-          console.log(result);
-        })
+        .then((result: any) => {})
         .catch((err: any) => {
           console.error(err);
         });
-      // })
     };
 
     app.commands.addCommand(command, {
