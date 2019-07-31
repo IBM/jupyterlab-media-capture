@@ -8,7 +8,8 @@ basedir = getcwd()
 
 def save_file(path, content):
     content_bytes = bytearray(content)
-    path ='{}{}'.format(basedir, path)
+    path ='{}/{}'.format(basedir, path)
+    path = path.replace('//', '/')
     with open(path, 'wb') as new_file:
         new_file.write(content_bytes)
     return path
