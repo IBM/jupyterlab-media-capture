@@ -6,4 +6,6 @@ node_modules/
 .env
 **/*.ipynb
 **/*.wav
+**/*.webm
+**/*.ogg
 notebooks_for_testing/

@@ -38,6 +38,7 @@ class AudioRecorder extends Widget {
 let audioRecorder: any;
 const mimeType = "audio/wav";
 let saveFile: Function;
+let insertCodeSnippet = false;
 let insertCodeSnippetForFile: Function;
 let audioStream: any;
 
@@ -269,7 +270,7 @@ namespace Private {
           var content: any = Array.from(
             new Uint8Array(fileReader.result as any)
           );
-          saveFile(`${Date.now()}.wav`, content, mimeType, null).then(
+          saveFile(`${Date.now()}.ogg`, content, mimeType, null).then(
             (filepath: string) => {
               audioStream
                 .getAudioTracks()
@@ -287,9 +288,13 @@ namespace Private {
     var showDoneRecording = (filepath: string) => {
       clearAudioRecorderNode();
       let text = document.createElement("span");
-      text.innerHTML = `<h3>Saved recording as ${filepath}</br>and inserted into your notebook.</h3></br>`;
+      text.innerHTML = `<h3>Saved recording as ${filepath}</h3></br>`;
       body.appendChild(text);
-      insertCodeSnippetForFile(filepath);
+      // maybe later:
+      if (insertCodeSnippet) {
+        text.innerHTML = `<h3>Saved recording as ${filepath}</br>and inserted into your notebook.</h3></br>`;
+        insertCodeSnippetForFile(filepath);
+      }
     };
 
     var showRecording = () => {
