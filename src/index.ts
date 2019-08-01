@@ -261,24 +261,28 @@ namespace Private {
     };
 
     var stopRecording = () => {
+      // console.log(audioRecorder)
       audioRecorder.stopRecording(function() {
         var fileReader = new FileReader();
         const blob = audioRecorder.getBlob();
+
+        const file_extension = blob.type.split("/")[1];
 
         fileReader.readAsArrayBuffer(blob);
         fileReader.onload = () => {
           var content: any = Array.from(
             new Uint8Array(fileReader.result as any)
           );
-          saveFile(`${Date.now()}.ogg`, content, mimeType, null).then(
-            (filepath: string) => {
-              audioStream
-                .getAudioTracks()
-                .forEach((track: any) => track.stop());
-              audioRecorder.destroy();
-              showDoneRecording(filepath);
-            }
-          );
+          saveFile(
+            `${Date.now()}.${file_extension}`,
+            content,
+            mimeType,
+            null
+          ).then((filepath: string) => {
+            audioStream.getAudioTracks().forEach((track: any) => track.stop());
+            audioRecorder.destroy();
+            showDoneRecording(filepath);
+          });
         };
         // RecordRTC.audioStream.getTracks().forEach((track: any) => {track.stop()})
         // RecordRTC.getTracks().forEach((track: any) => {track.stop()})
@@ -288,8 +292,9 @@ namespace Private {
     var showDoneRecording = (filepath: string) => {
       clearAudioRecorderNode();
       let text = document.createElement("span");
-      text.innerHTML = `<h3>Saved recording as ${filepath}</h3></br>`;
+      text.innerHTML = `<span>Saved recording as:</br></br>${filepath}</span></br>`;
       body.appendChild(text);
+
       // maybe later:
       if (insertCodeSnippet) {
         text.innerHTML = `<h3>Saved recording as ${filepath}</br>and inserted into your notebook.</h3></br>`;
@@ -305,11 +310,11 @@ namespace Private {
         .then(async function(stream) {
           clearAudioRecorderNode();
           audioStream = stream;
+
           audioRecorder = RecordRTC(audioStream, {
             type: "audio",
             mimeType
           });
-          /// put button here
           let text = document.createElement("span");
           text.innerHTML = "<h3>Recording</h3></br>";
           text.className = "blinking";
