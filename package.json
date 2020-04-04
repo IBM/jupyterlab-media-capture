@@ -1,5 +1,5 @@
 {
-  "name": "@apset/jupyterlab-media-capture",
+  "name": "jupyterlab-media-capture",
   "version": "0.2.6",
   "description": "Capture media using browser APIs within JupyterLab",
   "keywords": [
@@ -7,18 +7,15 @@
     "jupyterlab",
     "jupyterlab-extension"
   ],
-  "homepage": "https://github.ibm.com/cognitive-class-labs/jupyterlab-media-capture",
+  "homepage": "https://github.com/IBM/jupyterlab-media-capture",
   "repository": {
     "type": "git",
-    "url": "https://github.ibm.com/cognitive-class-labs/jupyterlab-media-capture.git"
+    "url": "https://github.com/IBM/jupyterlab-media-capture.git"
   },
   "bugs": {
-    "url": "https://github.ibm.com/cognitive-class-labs/jupyterlab-media-capture/issues"
+    "url": "https://github.com/IBM/jupyterlab-media-capture/issues"
   },
-  "publishConfig": {
-    "registry": "https://na.artifactory.swg-devops.com/artifactory/api/npm/apset-npm/"
-  },
-  "license": "MIT",
+  "license": "Apache 2",
   "author": "James Reeve",
   "files": [
     "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
