@@ -9,3 +9,4 @@ node_modules/
 **/*.webm
 **/*.ogg
 notebooks_for_testing/
+dist/*
