@@ -36,7 +36,7 @@ class AudioRecorder extends Widget {
 }
 
 let audioRecorder: any;
-const mimeType = "audio/ogg";
+const mimeType = "audio/webm";
 let saveFile: Function;
 let insertCodeSnippet = false;
 let insertCodeSnippetForFile: Function;
