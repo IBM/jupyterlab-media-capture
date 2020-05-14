@@ -36,7 +36,7 @@ class AudioRecorder extends Widget {
 }
 
 let audioRecorder: any;
-const mimeType = "audio/ogg";
+const mimeType = "audio/webm";
 let saveFile: Function;
 let insertCodeSnippet = false;
 let insertCodeSnippetForFile: Function;
@@ -266,7 +266,7 @@ namespace Private {
         var fileReader = new FileReader();
         const blob = audioRecorder.getBlob();
 
-        const file_extension = blob.type.split("/")[1];
+        const file_extension = blob.type.split("/")[1].split(";")[0];
 
         fileReader.readAsArrayBuffer(blob);
         fileReader.onload = () => {
