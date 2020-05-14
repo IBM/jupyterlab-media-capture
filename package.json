@@ -1,6 +1,6 @@
 {
   "name": "jupyterlab-media-capture",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Capture media using browser APIs within JupyterLab",
   "keywords": [
     "jupyter",

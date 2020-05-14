@@ -17,4 +17,4 @@ setup_dict = dict(
     install_requires=["notebook"],
 )
 
-setup(version="0.2.7", **setup_dict)
+setup(version="0.2.8", **setup_dict)
