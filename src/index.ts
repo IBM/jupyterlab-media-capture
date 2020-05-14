@@ -266,7 +266,7 @@ namespace Private {
         var fileReader = new FileReader();
         const blob = audioRecorder.getBlob();
 
-        const file_extension = blob.type.split("/")[1];
+        const file_extension = blob.type.split("/")[1].split(";")[0];
 
         fileReader.readAsArrayBuffer(blob);
         fileReader.onload = () => {
