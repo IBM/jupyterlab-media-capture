@@ -25,9 +25,9 @@ import { URLExt } from "@jupyterlab/coreutils";
 
 import { Dialog, showDialog } from "@jupyterlab/apputils";
 
-import { Widget } from "@phosphor/widgets";
+import { Widget } from "@lumino/widgets";
 
-import * as RecordRTC from "recordrtc";
+import RecordRTC from "recordrtc";
 
 class AudioRecorder extends Widget {
   constructor() {

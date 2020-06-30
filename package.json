@@ -1,6 +1,6 @@
 {
   "name": "jupyterlab-media-capture",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "description": "Capture media using browser APIs within JupyterLab",
   "keywords": [
     "jupyter",
@@ -42,11 +42,12 @@
     ]
   },
   "dependencies": {
-    "@jupyterlab/application": "^1.0.1",
-    "@jupyterlab/docmanager": "^1.0.1",
-    "@jupyterlab/filebrowser": "^1.0.1",
-    "@jupyterlab/notebook": "^1.0.1",
-    "@jupyterlab/services": "^4.0.1",
+    "@jupyterlab/application": "^2.0.0",
+    "@jupyterlab/docmanager": "^2.0.0",
+    "@jupyterlab/filebrowser": "^2.0.0",
+    "@jupyterlab/notebook": "^2.0.0",
+    "@jupyterlab/services": "^5.0.0",
+    "@lumino/widgets": "^1.0.0",
     "recordrtc": "^5.5.8"
   },
   "devDependencies": {
@@ -57,7 +58,7 @@
     "tslint": "^5.18.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.5.2"
+    "typescript": "^3.7.5"
   },
   "jupyterlab": {
     "extension": true
