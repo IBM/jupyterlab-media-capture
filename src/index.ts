@@ -1,33 +1,33 @@
 import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
-} from "@jupyterlab/application";
+} from '@jupyterlab/application';
 
-import "../style/index.css";
+import '../style/index.css';
 
 import {
   NotebookActions,
   INotebookTracker,
   INotebookModel
-} from "@jupyterlab/notebook";
+} from '@jupyterlab/notebook';
 
-import { ICommandPalette } from "@jupyterlab/apputils";
+import { ICommandPalette } from '@jupyterlab/apputils';
 
 // import { ContentsManager, Contents } from "@jupyterlab/services";
 
-import { IFileBrowserFactory } from "@jupyterlab/filebrowser";
+import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
 
-import { IDocumentManager } from "@jupyterlab/docmanager";
+import { IDocumentManager } from '@jupyterlab/docmanager';
 
-import { ServerConnection } from "@jupyterlab/services";
+import { ServerConnection } from '@jupyterlab/services';
 
-import { URLExt } from "@jupyterlab/coreutils";
+import { URLExt } from '@jupyterlab/coreutils';
 
-import { Dialog, showDialog } from "@jupyterlab/apputils";
+import { Dialog, showDialog } from '@jupyterlab/apputils';
 
-import { Widget } from "@lumino/widgets";
+import { Widget } from '@lumino/widgets';
 
-import RecordRTC from "recordrtc";
+import RecordRTC from 'recordrtc';
 
 class AudioRecorder extends Widget {
   constructor() {
@@ -36,9 +36,9 @@ class AudioRecorder extends Widget {
 }
 
 let audioRecorder: any;
-const mimeType = "audio/webm";
+const mimeType = 'audio/webm';
 let saveFile: Function;
-let insertCodeSnippet = false;
+const insertCodeSnippet = false;
 let insertCodeSnippetForFile: Function;
 let audioStream: any;
 
@@ -50,7 +50,7 @@ function sleep(ms: number) {
  * Initialization data for the jupyterlab_media_capture extension.
  */
 const extension: JupyterFrontEndPlugin<void> = {
-  id: "jupyterlab_media_capture",
+  id: 'jupyterlab_media_capture',
   autoStart: true,
   requires: [
     INotebookTracker,
@@ -66,25 +66,29 @@ const extension: JupyterFrontEndPlugin<void> = {
     docManager: IDocumentManager
   ) => {
     const { commands } = app;
-    const command: string = "media:record-audio";
+    const command = 'media:record-audio';
 
     // let contents = new ContentsManager();
     // console.log(RecordRTC);
 
-    saveFile = function(
+    saveFile = function (
       filename: string,
       content: any,
       mimeType: string,
       path: string
     ): Promise<string> {
       return new Promise((resolve, reject) => {
-        path = `${path ||
-          browserFactory.defaultBrowser.model.path}/${filename}`;
+        path = `${
+          path || browserFactory.defaultBrowser.model.path
+        }/${filename}`;
         const settings = ServerConnection.makeSettings();
-        const url = URLExt.join(settings.baseUrl, "/media_capture");
+        const url = URLExt.join(
+          settings.baseUrl,
+          '/jupyterlab_media_capture/media_capture'
+        );
         ServerConnection.makeRequest(
           url,
-          { method: "POST", body: JSON.stringify({ filename, path, content }) },
+          { method: 'POST', body: JSON.stringify({ filename, path, content }) },
           settings
         )
           .then((response: any) => {
@@ -96,15 +100,15 @@ const extension: JupyterFrontEndPlugin<void> = {
       });
     };
 
-    insertCodeSnippetForFile = async function(path: string) {
+    insertCodeSnippetForFile = async function (path: string) {
       let notebook: any;
-      if (tracker.currentWidget == null) {
+      if (tracker.currentWidget === null) {
         // not in a notebook -- just open the file
         await commands
-          .execute("notebook:create-new", {
+          .execute('notebook:create-new', {
             path,
-            type: "notebook",
-            kernelName: "conda-env-python-py"
+            type: 'notebook',
+            kernelName: 'conda-env-python-py'
           })
           .then(async (model: INotebookModel) => {
             notebook = model;
@@ -128,149 +132,58 @@ const extension: JupyterFrontEndPlugin<void> = {
 Audio("${path}")`;
 
       NotebookActions.run(notebook.content, notebook.session)
-        .then((result: any) => {})
+        .then((result: any) => {
+          // do nothing
+        })
         .catch((err: any) => {
           console.error(err);
         });
     };
 
     app.commands.addCommand(command, {
-      label: "Record Audio",
+      label: 'Record Audio',
       execute: () => {
         showDialog({
           body: new AudioRecorder(),
-          buttons: [Dialog.cancelButton({ label: "Exit" })]
+          buttons: [Dialog.cancelButton({ label: 'Exit' })]
         }).then(result => {
           if (audioRecorder) {
             audioStream.getAudioTracks().forEach((track: any) => track.stop());
             audioRecorder.destroy;
+          } else {
+            console.error('no AudioRecorder');
           }
         });
-
-        if (1 > 2) {
-        }
-
-        //         var video = document.createElement("video");
-        //         video.id = "video";
-        //         video.autoplay = true;
-        //         video.hidden = true;
-
-        //         var canvas = document.createElement("canvas");
-        //         canvas.height = 1200;
-        //         canvas.width = 1600;
-        //         canvas.hidden = true;
-
-        //         const context = canvas.getContext("2d");
-
-        //         const constraints = {
-        //           video: true
-        //         };
-
-        //         document.body.appendChild(video);
-
-        //         navigator.mediaDevices
-        //           .getUserMedia(constraints)
-        //           .then(stream => {
-        //             video.srcObject = stream;
-        //             video.play;
-        //             return new Promise(resolve => (video.onplaying = resolve));
-        //           })
-        //           .then(() => {
-        //             setTimeout(() => {
-        //               // wait for camera to adjust
-        //               context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        //               var image = canvas.toDataURL();
-        //               console.log(image);
-
-        //               // let future = tracker.currentWidget.session.kernel.requestExecute({
-        //               //   code: `image = ${image}`
-        //               // });
-        //               // future.done.then(() => {console.log('image available')});
-        //               let name = `${Date.now()}.png`;
-        //               let path = `${browserFactory.defaultBrowser.model.path}/${name}`;
-        //               let model: Partial<Contents.IModel> = {
-        //                 type: "file",
-        //                 format: "base64",
-        //                 content: image.split(",")[1],
-        //                 path,
-        //                 name,
-        //                 mimeType: "image/png"
-        //               };
-
-        //               contents
-        //                 .save(path, model)
-        //                 .then(model => {
-        //                   if (tracker.currentWidget == null) {
-        //                     // not in a notebook -- just open the image
-        //                     docManager.open(path);
-        //                   } else {
-        //                     console.log("inserting cell");
-        //                     NotebookActions.insertBelow(tracker.currentWidget.content);
-        //                     tracker.currentWidget.content.activeCell.model.value.text = `from matplotlib import pyplot as plt
-        // import cv2
-
-        // img = cv2.imread(".${path}")
-        // img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # fix color
-        // plt.axis("off") # remove axes ticks
-        // plt.imshow(img)
-        // plt.show()`;
-        //                     NotebookActions.run(
-        //                       tracker.currentWidget.content,
-        //                       tracker.currentWidget.session
-        //                     )
-        //                       .then(result => {
-        //                         console.log(result);
-        //                       })
-        //                       .catch(err => {
-        //                         console.error(err);
-        //                       });
-        //                   }
-        //                 })
-        //                 .catch(err => {
-        //                   console.error("unable to save webcam image");
-        //                   console.error(err);
-        //                 });
-
-        //               (<MediaStream>video.srcObject)
-        //                 .getVideoTracks()
-        //                 .forEach(track => track.stop());
-        //               video.remove();
-        //               canvas.remove();
-        //             }, 1000);
-        //           })
-        //           .catch(err => {
-        //             console.error(err);
-        //           });
       }
     });
 
-    palette.addItem({ command, category: "Media Capture" });
-    console.log("JupyterLab extension jupyterlab_media_capture is activated!");
+    palette.addItem({ command, category: 'Media Capture' });
+    console.log('JupyterLab extension jupyterlab_media_capture is activated!');
   }
 };
 
 namespace Private {
   export function createAudioRecorderNode(): HTMLElement {
-    let body = document.createElement("div");
+    const body = document.createElement('div');
 
-    var clearAudioRecorderNode = () => {
+    const clearAudioRecorderNode = () => {
       let child;
       while ((child = body.firstChild)) {
         body.removeChild(child);
       }
     };
 
-    var stopRecording = () => {
+    const stopRecording = () => {
       // console.log(audioRecorder)
-      audioRecorder.stopRecording(function() {
-        var fileReader = new FileReader();
+      audioRecorder.stopRecording(() => {
+        const fileReader = new FileReader();
         const blob = audioRecorder.getBlob();
 
-        const file_extension = blob.type.split("/")[1].split(";")[0];
+        const file_extension = blob.type.split('/')[1].split(';')[0];
 
         fileReader.readAsArrayBuffer(blob);
         fileReader.onload = () => {
-          var content: any = Array.from(
+          const content: any = Array.from(
             new Uint8Array(fileReader.result as any)
           );
           saveFile(
@@ -289,9 +202,9 @@ namespace Private {
       });
     };
 
-    var showDoneRecording = (filepath: string) => {
+    const showDoneRecording = (filepath: string) => {
       clearAudioRecorderNode();
-      let text = document.createElement("span");
+      const text = document.createElement('span');
       text.innerHTML = `<span>Saved recording as:</br></br>${filepath}</span></br>`;
       body.appendChild(text);
 
@@ -302,25 +215,26 @@ namespace Private {
       }
     };
 
-    var showRecording = () => {
+    const showRecording = () => {
       navigator.mediaDevices
         .getUserMedia({
           audio: true
         })
-        .then(async function(stream) {
+        .then(async stream => {
           clearAudioRecorderNode();
           audioStream = stream;
 
           audioRecorder = RecordRTC(audioStream, {
-            type: "audio",
+            type: 'audio',
             mimeType
           });
-          let text = document.createElement("span");
-          text.innerHTML = "<h3>Recording</h3></br>";
-          text.className = "blinking";
+          const text = document.createElement('span');
+          text.innerHTML = '<h3>Recording</h3></br>';
+          text.className = 'blinking';
           body.appendChild(text);
-          let stopRecordingButton = document.createElement("span");
-          stopRecordingButton.className = "stop-recording-icon";
+          const stopRecordingButton = document.createElement('button');
+          stopRecordingButton.className =
+            'jp-Button stop-recording-icon jp-mod-styled';
           stopRecordingButton.onclick = stopRecording;
           body.appendChild(stopRecordingButton);
 
@@ -328,17 +242,19 @@ namespace Private {
         });
     };
 
-    var recordClickHandler = () => {
+    const recordClickHandler = () => {
       showRecording();
     };
 
-    var showRecordPrompt = () => {
+    const showRecordPrompt = () => {
       clearAudioRecorderNode();
-      let text = document.createElement("span");
-      text.innerHTML = "<h3>Click the button to start recording</h3></br>";
+      const text = document.createElement('span');
+      text.innerHTML =
+        '<h3>Click the button below to start recording</h3></br>';
       body.appendChild(text);
-      let recordButton = document.createElement("span");
-      recordButton.className = "microphone-icon";
+      const recordButton = document.createElement('button');
+
+      recordButton.className = 'jp-Button microphone-icon jp-mod-styled';
       recordButton.onclick = recordClickHandler;
       body.appendChild(recordButton);
     };

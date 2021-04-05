@@ -1,0 +1,17 @@
+version: "3.4"
+services:
+  jupyterlab:
+    build: .
+    ports:
+      - "8888:8888"
+    environment:
+      - "GITHUB_CLIENT_ID"
+      - "GITHUB_CLIENT_SECRET"
+    command:
+      - jupyter
+      - lab
+      - --ip=0.0.0.0
+      - --no-browser
+      - --ServerApp.password=''
+      - --ServerApp.token=''
+      - --allow-root
