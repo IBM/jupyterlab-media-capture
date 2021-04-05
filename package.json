@@ -16,10 +16,14 @@
     "url": "https://github.com/IBM/jupyterlab-media-capture/issues"
   },
   "license": "Apache-2.0",
-  "author": "James Reeve",
+  "author": {
+    "name": "James Reeve",
+    "email": "james.reeve@ibm.com"
+  },
   "files": [
     "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
-    "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}"
+    "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}",
+    "style/index.js"
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -27,13 +31,26 @@
     "lib": "lib/"
   },
   "scripts": {
-    "test": "echo 'no tests implemented'",
-    "build": "tsc",
-    "clean": "rimraf lib",
-    "precommit": "lint-staged",
+    "build": "jlpm run build:lib && jlpm run build:labextension:dev",
+    "build:labextension": "jupyter labextension build .",
+    "build:labextension:dev": "jupyter labextension build --development True .",
+    "build:lib": "tsc",
+    "build:prod": "jlpm run build:lib && jlpm run build:labextension",
+    "clean": "jlpm run clean:lib",
+    "clean:all": "jlpm run clean:lib && jlpm run clean:labextension",
+    "clean:labextension": "rimraf jupyterlab_media_capture/labextension",
+    "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
+    "eslint": "eslint . --ext .ts,.tsx --fix",
+    "eslint:check": "eslint . --ext .ts,.tsx",
+    "install:extension": "jupyter labextension develop --overwrite .",
     "lint-travis": "travis lint .travis.yml",
+    "precommit": "lint-staged",
+    "prepare": "jlpm run clean && jlpm run build:prod",
     "prettier": "prettier --write '**/*{.ts,.tsx,.js,.jsx,.css,.json,.md}'",
-    "watch": "tsc -w"
+    "test": "echo 'no tests implemented'",
+    "watch": "run-p watch:src watch:labextension",
+    "watch:labextension": "jupyter labextension watch .",
+    "watch:src": "tsc -w"
   },
   "lint-staged": {
     "**/*{.ts,.tsx,.css,.json,.md}": [
@@ -42,25 +59,35 @@
     ]
   },
   "dependencies": {
-    "@jupyterlab/application": "^2.0.0",
-    "@jupyterlab/docmanager": "^2.0.0",
-    "@jupyterlab/filebrowser": "^2.0.0",
-    "@jupyterlab/notebook": "^2.0.0",
-    "@jupyterlab/services": "^5.0.0",
-    "@lumino/widgets": "^1.0.0",
+    "@jupyterlab/application": "^3.0.7",
+    "@jupyterlab/docmanager": "^3.0.7",
+    "@jupyterlab/filebrowser": "^3.0.7",
+    "@jupyterlab/notebook": "^3.0.7",
+    "@jupyterlab/services": "^6.0.5",
+    "@lumino/widgets": "^1.16.1",
     "recordrtc": "^5.5.8"
   },
   "devDependencies": {
+    "@jupyterlab/builder": "^3.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.8.1",
+    "@typescript-eslint/parser": "^4.8.1",
+    "eslint": "^7.14.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "husky": "^2.4.1",
     "lint-staged": "^8.2.1",
-    "prettier": "^1.18.2",
-    "rimraf": "^2.6.3",
+    "mkdirp": "^1.0.3",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.1.1",
+    "rimraf": "^3.0.2",
     "tslint": "^5.18.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
-    "typescript": "^3.7.5"
+    "typescript": "~4.1.3"
   },
   "jupyterlab": {
-    "extension": true
-  }
+    "extension": true,
+    "outputDir": "jupyterlab_media_capture/labextension"
+  },
+  "styleModule": "style/index.js"
 }

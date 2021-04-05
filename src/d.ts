@@ -1,1 +1,1 @@
-declare module "recordrtc";
+declare module 'recordrtc';

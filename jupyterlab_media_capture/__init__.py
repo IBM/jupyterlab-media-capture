@@ -1,38 +1,40 @@
 import json
-from notebook.utils import url_path_join
-from notebook.base.handlers import APIHandler
-from os import listdir, environ, makedirs, removedirs, getcwd
-from os.path import isfile, isdir, join
+from pathlib import Path
 
-basedir = getcwd()
+from ._version import __version__
 
-def save_file(path, content):
-    content_bytes = bytearray(content)
-    path ='{}/{}'.format(basedir, path)
-    path = path.replace('//', '/')
-    with open(path, 'wb') as new_file:
-        new_file.write(content_bytes)
-    return path
+HERE = Path(__file__).parent.resolve()
 
-class MediaCaptureHandler(APIHandler):
-    def get(self, path=''):
-        self.finish(json.dumps({'wip': True}))
+with (HERE / "labextension" / "package.json").open() as fid:
+    data = json.load(fid)
 
-    def post(self, path=''):
-        body = json.loads(self.request.body)
-        saved_path = save_file(body['path'], body['content'])
-        self.finish(json.dumps({'saved_path': saved_path}))
-
-
-def _jupyter_server_extension_paths():
+def _jupyter_labextension_paths():
     return [{
-        'module': 'jupyterlab_media_capture'
+        "src": "labextension",
+        "dest": "jupyterlab_media_capture"
     }]
 
 
-def load_jupyter_server_extension(nb_server_app):
-    web_app = nb_server_app.web_app
-    base_url = web_app.settings['base_url']
-    endpoint = url_path_join(base_url, 'media_capture')
-    handlers = [(endpoint + "(.*)", MediaCaptureHandler)]
-    web_app.add_handlers('.*$', handlers)
+from .handlers import setup_handlers
+
+
+def _jupyter_server_extension_points():
+    return [{
+        "module": "jupyterlab_media_capture"
+    }]
+
+
+def _load_jupyter_server_extension(server_app):
+    """Registers the API handler to receive HTTP requests from the frontend extension.
+
+    Parameters
+    ----------
+    server_app: jupyterlab.labapp.LabApp
+        JupyterLab application instance
+    """
+    setup_handlers(server_app.web_app)
+    server_app.log.info("Registered HelloWorld extension at URL path /jupyterlab_media_capture")
+
+# backwards compatibility with jupyterlab 2.0
+load_jupyter_server_extension = _load_jupyter_server_extension
+_jupyter_server_extension_paths = _jupyter_server_extension_points
